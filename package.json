@@ -1,0 +1,36 @@
+{
+  "name": "@mnemosyne-plugins/mnemo-vulns",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Known vulnerabilities in your projects: MnemoVulns reads a lockfile, asks OSV.dev which installed versions have a known vulnerability, keeps each advisory in a memory pack, and tracks every vulnerability from one scan to the next.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "dev:cartridge": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.eslint.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mnemosyne_os/cartridge-sdk": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1",
+    "vitest": "^3.2.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mnemosyne-OS/MnemoVulns"
+  }
+}

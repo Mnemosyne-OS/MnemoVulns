@@ -1,0 +1,45 @@
+{
+  "name": "@mnemosyne-plugins/mnemo-vulns",
+  "displayName": "MnemoVulns",
+  "version": "0.2.0",
+  "category": "Memory",
+  "vendor": "Mnemosyne Labs",
+  "license": "MIT",
+  "description": "Known vulnerabilities in your projects. Choose a project folder: MnemoVulns reads its lockfile (pnpm-lock.yaml or package-lock.json), asks OSV.dev which installed versions have a known vulnerability, and shows each one with the version that fixes it. Each advisory is kept in your knowledge folder and in a memory pack with its source, its licence and its date, and every vulnerability is tracked from one scan to the next: open, fixed, or a risk you accepted with your reason.",
+  "descriptionI18n": {
+    "en": "Known vulnerabilities in your projects. Choose a project folder: MnemoVulns reads its lockfile (pnpm-lock.yaml or package-lock.json), asks OSV.dev which installed versions have a known vulnerability, and shows each one with the version that fixes it. Each advisory is kept in your knowledge folder and in a memory pack with its source, its licence and its date, and every vulnerability is tracked from one scan to the next: open, fixed, or a risk you accepted with your reason.",
+    "fr": "Les failles connues de tes projets. Choisis le dossier d'un projet : MnemoVulns lit son lockfile (pnpm-lock.yaml ou package-lock.json), demande à OSV.dev quelles versions installées ont une faille connue, et montre chacune avec la version qui la corrige. Chaque fiche est rangée dans ton dossier des connaissances et dans un pack de mémoire avec sa source, sa licence et sa date, et chaque faille est suivie d'un scan à l'autre : ouverte, corrigée, ou un risque que tu as accepté avec ta raison.",
+    "es": "Las vulnerabilidades conocidas de tus proyectos. Elige la carpeta de un proyecto: MnemoVulns lee su lockfile (pnpm-lock.yaml o package-lock.json), pregunta a OSV.dev qué versiones instaladas tienen una vulnerabilidad conocida y muestra cada una con la versión que la corrige. Cada ficha se guarda en tu carpeta de conocimientos y en un paquete de memoria con su fuente, su licencia y su fecha, y cada vulnerabilidad se sigue de un análisis a otro: abierta, corregida o un riesgo que aceptaste con tu motivo."
+  },
+  "keywords": [
+    "security",
+    "vulnerabilities",
+    "cve",
+    "osv",
+    "dependencies",
+    "lockfile",
+    "npm",
+    "pnpm"
+  ],
+  "permissions": [
+    "vault:write",
+    "vault:read",
+    "dialog:open",
+    "vulns:mirror",
+    "cockpit:pin"
+  ],
+  "updateStrategy": "git",
+  "entrypoints": {
+    "renderer": "index.html"
+  },
+  "widgets": [
+    {
+      "id": "mnemo-vulns-main",
+      "icon": "🛡️",
+      "name": "MnemoVulns",
+      "route": "index.html",
+      "defaultWidth": 820,
+      "defaultHeight": 780
+    }
+  ]
+}

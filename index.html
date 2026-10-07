@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MnemoVulns</title>
+    <style>
+      html, body, #root {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--bg-void, #050505);
+        color: var(--text-primary, #e0e0e0);
+      }
+      button { transition: filter .15s ease, transform .1s ease, box-shadow .15s ease; font: inherit; }
+      button:not(:disabled):hover { filter: brightness(1.15); }
+      button:not(:disabled):active { transform: translateY(1px); }
+      button:disabled { opacity: .45; cursor: default; }
+      button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .mv-tile:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent) !important; }
+      @media (prefers-reduced-motion: reduce) { button, .mv-tile { transition: none; } .mv-tile:hover, button:active { transform: none; } }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
