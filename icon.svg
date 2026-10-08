@@ -1,0 +1,14 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MnemoVulns">
+  <defs>
+    <linearGradient id="vulns-grad" x1="6" y1="42" x2="42" y2="6" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <path d="M24 5L40 13V31L24 39L8 31V13Z" fill="url(#vulns-grad)" fill-opacity="0.16" stroke="url(#vulns-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8 13L24 21L40 13" stroke="url(#vulns-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24 21V39" stroke="url(#vulns-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="36" cy="37" r="7" fill="#0E0E13" stroke="url(#vulns-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36 33.5V37.5" stroke="url(#vulns-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="36" cy="40.3" r="1.2" fill="url(#vulns-grad)"/>
+</svg>

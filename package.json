@@ -1,6 +1,6 @@
 {
   "name": "@mnemosyne-plugins/mnemo-vulns",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Known vulnerabilities in your projects: MnemoVulns reads a lockfile, asks OSV.dev which installed versions have a known vulnerability, keeps each advisory in a memory pack, and tracks every vulnerability from one scan to the next.",

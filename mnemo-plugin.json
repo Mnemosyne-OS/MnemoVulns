@@ -1,8 +1,9 @@
 {
   "name": "@mnemosyne-plugins/mnemo-vulns",
   "displayName": "MnemoVulns",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "category": "Memory",
+  "icon": "icon.svg",
   "vendor": "Mnemosyne Labs",
   "license": "MIT",
   "description": "Known vulnerabilities in your projects. Choose a project folder: MnemoVulns reads its lockfile (pnpm-lock.yaml or package-lock.json), asks OSV.dev which installed versions have a known vulnerability, and shows each one with the version that fixes it. Each advisory is kept in your knowledge folder and in a memory pack with its source, its licence and its date, and every vulnerability is tracked from one scan to the next: open, fixed, or a risk you accepted with your reason.",
