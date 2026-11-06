@@ -16,7 +16,7 @@ import { tally, trackKey, type TrackEntry } from '../lib/tracking';
 import { progressOf } from '../lib/progress';
 import { Gauge } from './Gauge';
 import { S } from './styles';
-import { SEVERITY_KEY, SEVERITY_TOKEN, groupFindings, viaLine, type Job, type PackageGroup, type ScanView, type T } from './types';
+import { SEVERITY_KEY, SEVERITY_TOKEN, groupFindings, tileId, viaLine, type Job, type PackageGroup, type ScanView, type T } from './types';
 
 /** One project's screen. */
 export function ProjectView({ t, lang, project, view, job, now, onScan, onStop, onBack, onAccept, onReopen, onOpenUrl }: {
@@ -158,7 +158,7 @@ export function ProjectView({ t, lang, project, view, job, now, onScan, onStop, 
           <div style={S.p}>{t('plan.lead', { n: plans.filter((p) => p.open > 0).length + openMalicious })}</div>
           <div role="group" aria-label={t('plan.filterLabel')} style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {filters.map((f) => (
-              <button key={f.id} style={{ ...S.ghost, ...(filter === f.id ? S.iconOn : {}) }} aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>
+              <button key={f.id} style={{ ...S.ghost, ...(filter === f.id ? S.iconOn : {}) }} aria-pressed={filter === f.id} data-plan-filter={f.id} onClick={() => setFilter(f.id)}>
                 {t(f.key, { n: filterPlans(plans, f.id).length })}
               </button>
             ))}
@@ -254,9 +254,6 @@ function Row({ t, f, versions, entry, editable, onAccept, onReopen, onOpenUrl }:
   );
 }
 
-/** The DOM id of a package tile, for the header's shortcuts. */
-const tileId = (key: string) => `pkg-${key.replace(/[^A-Za-z0-9_-]/g, '_')}`;
-
 const PLACE: Record<Place, { label: 'plan.shipped' | 'plan.dev' | 'plan.unknown'; why: 'plan.shippedWhy' | 'plan.devWhy' | 'plan.unknownWhy'; color: string }> = {
   shipped: { label: 'plan.shipped', why: 'plan.shippedWhy', color: 'var(--danger, var(--accent))' },
   dev: { label: 'plan.dev', why: 'plan.devWhy', color: 'var(--text-muted)' },
@@ -348,7 +345,7 @@ function PackageCard({ t, p, findings, states, editable, onAccept, onReopen, onO
         })}
       </div>
 
-      <button style={{ ...S.link, fontSize: 12 }} aria-expanded={open} onClick={() => setOpen(!open)}>
+      <button style={{ ...S.link, fontSize: 12 }} aria-expanded={open} data-tile-expand onClick={() => setOpen(!open)}>
         {open ? `▾ ${t('plan.hide')}` : `▸ ${rows.length === 1 ? t('plan.show1') : t('plan.show', { n: rows.length })}`}
       </button>
       {open && (

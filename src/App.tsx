@@ -26,6 +26,7 @@ import { S } from './ui/styles';
 import { Home } from './ui/Home';
 import { ProjectView } from './ui/ProjectView';
 import { Footer } from './ui/Footer';
+import { VulnsAgentActions } from './ui/VulnsAgentActions';
 import type { Job, MirrorState, MirrorView, ScanView, View } from './ui/types';
 
 // Must match "name" in mnemo-plugin.json: the host keys the Memory Pack and its folder on it.
@@ -437,28 +438,30 @@ export default function App() {
   }, [rescanPending, job, libStatus.kind]);
 
   // ── Accept a risk / take it back: the person's own change of the tracker ─
-  const changeTracking = async (root: string, change: (tracking: Tracking, at: string) => Tracking | null) => {
+  /** True once the tracker is written and the summary saved (the agent door reports it, doc 149). */
+  const changeTracking = async (root: string, change: (tracking: Tracking, at: string) => Tracking | null): Promise<boolean> => {
     const current = scans[root];
     const folder = libRef.current.folder;
-    if (current?.kind !== 'done' || !current.outcome.trackingWritten || !folder) return;
+    if (current?.kind !== 'done' || !current.outcome.trackingWritten || !folder) return false;
     const next = change(current.outcome.tracking, new Date().toISOString());
     if (!next) {
       // The tracker has no such entry: the gesture changed nothing, and the screen says it.
       setNotice([t('track.notFound')]);
-      return;
+      return false;
     }
     try {
       const w = await saveTracking(port, folder, current.outcome.project, next);
       if (!w.success) {
         setNotice([t('track.notWritten', { why: w.error ?? 'WRITE_FAILED' })]);
-        return;
+        return false;
       }
       const project = { ...current.outcome.project, lastScan: summaryOf(current.outcome.scan, next) };
       setScans((m) => ({ ...m, [root]: { kind: 'done', outcome: { ...current.outcome, tracking: next, project } } }));
       // The home tiles read the stored summary: an accepted risk is no longer counted as open there.
-      await saveLib(withProject(libRef.current, project));
+      return await saveLib(withProject(libRef.current, project));
     } catch (err) {
       setNotice([t('track.notWritten', { why: errText(err) })]);
+      return false;
     }
   };
 
@@ -480,6 +483,16 @@ export default function App() {
 
   return (
     <div style={S.page}>
+      <VulnsAgentActions
+        lib={lib} libStatus={libStatus} view={view} scans={scans} job={job}
+        openProject={(root) => { setNotice([]); setView({ kind: 'project', root }); }}
+        goHome={() => { setNotice([]); setView({ kind: 'home' }); }}
+        scan={scan}
+        changeTracking={changeTracking}
+        stopScan={() => abortRef.current?.abort()}
+        useSource={(s) => saveLib({ ...libRef.current, scanSource: s })}
+        mirrors={mirrors}
+      />
       <header style={S.header}>
         <div style={S.title}>🛡️ MnemoVulns</div>
         <div style={S.muted}>{t('app.subtitle')}</div>

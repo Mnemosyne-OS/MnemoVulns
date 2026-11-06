@@ -21,6 +21,12 @@ export function viaLine(t: T, via: readonly Via[], total?: number): string {
   return `${t('via.label')} ${ways}${more}`;
 }
 
+/**
+ * The DOM id of a package's tile on the project page: the Overview's links and
+ * the agent's showPackage both scroll to it (one spelling for both).
+ */
+export const tileId = (key: string) => `pkg-${key.replace(/[^A-Za-z0-9_-]/g, '_')}`;
+
 /** The translator handed down from App. */
 export type T = (key: Key, vars?: Record<string, string | number>) => string;
 

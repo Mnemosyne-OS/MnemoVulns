@@ -1,7 +1,7 @@
 {
   "name": "@mnemosyne-plugins/mnemo-vulns",
   "displayName": "MnemoVulns",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "category": "Memory",
   "icon": "icon.svg",
   "vendor": "Mnemosyne Labs",
@@ -29,6 +29,7 @@
     "vulns:mirror",
     "cockpit:pin"
   ],
+  "repository": "https://github.com/Mnemosyne-OS/MnemoVulns",
   "updateStrategy": "git",
   "entrypoints": {
     "renderer": "index.html"
@@ -42,5 +43,274 @@
       "defaultWidth": 820,
       "defaultHeight": 780
     }
-  ]
+  ],
+  "agentActions": [
+    {
+      "id": "projects",
+      "summary": "The projects MnemoVulns watches: name, folder, the summary of the last scan (open vulnerabilities by severity, what to fix first), and whether one is being scanned.",
+      "details": "lastScan is null for a project never scanned. A summary written by an older version may lack openBySeverity or toFix: absent, never 0.",
+      "effect": "read",
+      "params": {}
+    },
+    {
+      "id": "vulnerabilities",
+      "summary": "The known vulnerabilities of one project from its last scan: advisory id, package, installed version, severity, the version that fixes it, and its tracking state (open, accepted with the reason, fixed).",
+      "details": "The last scan is read when the project is open: NOT_LOADED says to call openProject first. state defaults to open. Reading changes nothing on screen: to show the person, openProject, filterPackages or showPackage.",
+      "effect": "read",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder; default the project on screen.",
+          "maxLength": 1000
+        },
+        "state": {
+          "type": "string",
+          "description": "Which ones (default open).",
+          "enum": [
+            "open",
+            "accepted",
+            "fixed",
+            "withdrawn",
+            "all"
+          ]
+        },
+        "limit": {
+          "type": "number",
+          "description": "How many (default 100).",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "severity": {
+          "type": "string",
+          "description": "Only this severity.",
+          "enum": [
+            "CRITICAL",
+            "HIGH",
+            "MODERATE",
+            "LOW",
+            "UNKNOWN"
+          ]
+        },
+        "package": {
+          "type": "string",
+          "description": "Only this package, as the person says it (« lodash », « babel core »).",
+          "maxLength": 300
+        }
+      }
+    },
+    {
+      "id": "openProject",
+      "summary": "Show one project's page on the person's screen, as a click on its tile does.",
+      "effect": "write",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder.",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "project"
+      ]
+    },
+    {
+      "id": "home",
+      "summary": "Go back to MnemoVulns's home (the list of projects).",
+      "effect": "write",
+      "params": {}
+    },
+    {
+      "id": "showPackage",
+      "summary": "Show one vulnerable package on the project page: its tile scrolled into view and opened, as the person's click on it does.",
+      "details": "Opens the project first when another page is on screen. A filter that hides the tile is set back to all. A malicious package heads the page in its own section. Answers its open count, worst severity and the version that fixes it.",
+      "effect": "write",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder; default the project on screen.",
+          "maxLength": 1000
+        },
+        "package": {
+          "type": "string",
+          "description": "The package, as the person says it (« lodash », « babel core »).",
+          "maxLength": 300
+        }
+      },
+      "required": [
+        "package"
+      ]
+    },
+    {
+      "id": "filterPackages",
+      "summary": "Filter the project page's packages as its chips do: all, shipped (in the product), dev (development only), unknown (the lockfile does not say).",
+      "details": "unknown exists only when some package's place is not stated (NO_FILTER otherwise).",
+      "effect": "write",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder; default the project on screen.",
+          "maxLength": 1000
+        },
+        "show": {
+          "type": "string",
+          "description": "Which packages to show.",
+          "enum": [
+            "all",
+            "shipped",
+            "dev",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "show"
+      ]
+    },
+    {
+      "id": "scan",
+      "summary": "Scan a project now: read its lockfile, ask OSV.dev (or the local database) which installed versions are vulnerable, keep the records and update the tracking.",
+      "details": "Opens the project and answers started at once: a scan can take minutes. Call projects until scanning is false, then vulnerabilities. One scan at a time (BUSY).",
+      "effect": "write",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder; default the project on screen.",
+          "maxLength": 1000
+        }
+      }
+    },
+    {
+      "id": "stopScan",
+      "summary": "Stop the scan that is running, as its Stop button does.",
+      "details": "Answers stopped once the scan has ended, or stopping (follow with projects). NOT_SCANNING when none runs.",
+      "effect": "write",
+      "params": {}
+    },
+    {
+      "id": "setScanSource",
+      "summary": "Choose where scans look vulnerabilities up, as the base buttons of the home do: local (the database downloaded on this machine) or online (OSV.dev).",
+      "details": "Only once a local database is installed (NO_LOCAL_DATABASE). Not during a scan (BUSY).",
+      "effect": "write",
+      "params": {
+        "source": {
+          "type": "string",
+          "description": "local or online.",
+          "enum": [
+            "local",
+            "online"
+          ]
+        }
+      },
+      "required": [
+        "source"
+      ]
+    },
+    {
+      "id": "acceptRisk",
+      "summary": "Accept the risk of one open vulnerability, with the reason, as the person's Accept button does. It stops counting as open.",
+      "details": "The package alone names the risk when it has one open vulnerability; several are refused with their ids (AMBIGUOUS): pass id. ecosystem only when the same pair is in two ecosystems. On WRITE_FAILED, read vulnerabilities before retrying: the tracker may already say accepted.",
+      "effect": "write",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder; default the project on screen.",
+          "maxLength": 1000
+        },
+        "id": {
+          "type": "string",
+          "description": "The advisory id (GHSA-..., CVE-..., MAL-...), only when the package has several.",
+          "maxLength": 200
+        },
+        "package": {
+          "type": "string",
+          "description": "The package, as the person says it (« lodash », « babel core »).",
+          "maxLength": 300
+        },
+        "ecosystem": {
+          "type": "string",
+          "description": "The ecosystem (npm, PyPI...), only when needed.",
+          "maxLength": 40
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why the risk is accepted; kept with it.",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "package",
+        "reason"
+      ]
+    },
+    {
+      "id": "reopenRisk",
+      "summary": "Take an accepted risk back: the vulnerability is open again.",
+      "effect": "write",
+      "params": {
+        "project": {
+          "type": "string",
+          "description": "The project as the person says it (its name, or words of it) or its folder; default the project on screen.",
+          "maxLength": 1000
+        },
+        "id": {
+          "type": "string",
+          "description": "The advisory id (GHSA-..., CVE-..., MAL-...), only when the package has several.",
+          "maxLength": 200
+        },
+        "package": {
+          "type": "string",
+          "description": "The package, as the person says it (« lodash », « babel core »).",
+          "maxLength": 300
+        },
+        "ecosystem": {
+          "type": "string",
+          "description": "The ecosystem, only when needed.",
+          "maxLength": 40
+        }
+      },
+      "required": [
+        "package"
+      ],
+      "details": "The package alone names it when it has one accepted risk; several are refused with their ids (AMBIGUOUS): pass id."
+    }
+  ],
+  "agentGuide": [
+    "Name a project or a package the way the person says it (« le projet site », « lodash », « babel core »): MnemoVulns finds it by its words. Several matches are refused with their names (AMBIGUOUS): pick one and call again.",
+    "With no project named, the project on screen is meant.",
+    "To look at something: openProject for a project's page, showPackage for one package, filterPackages for the chips (shipped, dev, all), home for the list of projects.",
+    "scan takes minutes: it answers started, then call projects until scanning is false. stopScan stops it.",
+    "A risk is named by its package; the advisory id only when the package has several."
+  ],
+  "voiceCommands": {
+    "fr": [
+      "montre le projet site",
+      "montre le paquet lodash",
+      "filtre les paquets de dev",
+      "montre seulement ce qui est dans le produit",
+      "montre tous les paquets",
+      "arrête le scan",
+      "passe sur la base locale",
+      "reviens à la liste des projets"
+    ],
+    "en": [
+      "show the site project",
+      "show the lodash package",
+      "filter the dev packages",
+      "show only what ships in the product",
+      "show all the packages",
+      "stop the scan",
+      "switch to the local database",
+      "show the list of projects"
+    ],
+    "es": [
+      "muestra el proyecto site",
+      "muestra el paquete lodash",
+      "filtra los paquetes de desarrollo",
+      "muestra solo lo que va en el producto",
+      "muestra todos los paquetes",
+      "para el análisis",
+      "cambia a la base local",
+      "muestra la lista de proyectos"
+    ]
+  }
 }
